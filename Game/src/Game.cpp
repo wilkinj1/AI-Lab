@@ -11,6 +11,9 @@
 #include <Cameras/PerspectiveCamera.h>
 #include <Cameras/OrthographicCamera.h>
 
+#include "Player.h"
+#include "Enemy.h"
+
 // Initializing our static member pointer.
 GameEngine* GameEngine::_instance = nullptr;
 
@@ -30,6 +33,12 @@ Game::Game() : GameEngine()
 
 Game::~Game()
 {
+  // Clean up our characters.
+  delete _player;
+  _player = nullptr;
+
+  delete _enemy;
+  _enemy = nullptr;
 }
 
 void Game::InitializeImpl()
@@ -45,10 +54,20 @@ void Game::InitializeImpl()
   //_camera = new PerspectiveCamera(100.0f, 1.0f, nearPlane, farPlane, position, lookAt, up);
   _camera = new OrthographicCamera(-10.0f, 10.0f, 10.0f, -10.0f, nearPlane, farPlane, position, lookAt, up);
 
-  _objects.push_back(new Cube(Vector3(0.0f, 2.0f, 0.0f)));
+  /*_objects.push_back(new Cube(Vector3(0.0f, 2.0f, 0.0f)));
   _objects.push_back(new Cube(Vector3(1.0f, 1.0f, 0.0f)));
   _objects.push_back(new Cube(Vector3(1.0f, 0.0f, 1.0f)));
-  _objects.push_back(new Cube(Vector3(0.0f, 1.0f, 1.0f)));
+  _objects.push_back(new Cube(Vector3(0.0f, 1.0f, 1.0f)));*/
+
+  _player = new Player();
+  _enemy = new Enemy();
+
+  // Position our characters.
+  _player->GetTransform().position.x = -1.0f;
+  _enemy->GetTransform().position.x = 1.0f;
+
+  _objects.push_back(_player);
+  _objects.push_back(_enemy);
 
   for (auto itr = _objects.begin(); itr != _objects.end(); itr++)
   {

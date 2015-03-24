@@ -5,6 +5,8 @@
 union SDL_Event;
 class Graphics;
 class Camera;
+class Player;
+class Enemy;
 
 class Game: public GameEngine
 {
@@ -25,4 +27,6 @@ protected:
   void CalculateCameraViewpoint();
 
   Camera *_camera;
+  Player *_player;
+  Enemy *_enemy;
 };
