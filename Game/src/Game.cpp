@@ -62,10 +62,6 @@ void Game::InitializeImpl()
   _player = new Player();
   _enemy = new Enemy();
 
-  // Position our characters.
-  _player->GetTransform().position.x = -1.0f;
-  _enemy->GetTransform().position.x = 1.0f;
-
   _objects.push_back(_player);
   _objects.push_back(_enemy);
 
@@ -73,6 +69,13 @@ void Game::InitializeImpl()
   {
     (*itr)->Initialize(_graphicsObject);
   }
+
+  // Position our characters.
+  _player->GetTransform().position.x = -5.0f;
+  _enemy->GetTransform().position.x = 5.0f;
+
+  _enemy->SetApproachProximity(5.0f);
+  _enemy->SetApproachSpeed(5.0f);
 }
 
 void Game::UpdateImpl(float dt)
@@ -81,26 +84,16 @@ void Game::UpdateImpl(float dt)
   //SDL_PollEvent(&evt);
   InputManager::GetInstance()->Update(dt);
 
-  if (InputManager::GetInstance()->GetKeyState(SDLK_UP, SDL_KEYUP) == true)
+  if (InputManager::GetInstance()->GetKeyState(SDLK_LEFT, SDL_KEYDOWN) == true)
   {
-    Vector4 position = _camera->GetPosition();
-    position.y += 1.0f;
-
-    Vector4 lookAt = Vector4::Normalize(Vector4::Difference(Vector4(1.0f, 0.0f, 0.0f, 0.0f), position));
-
-    _camera->SetPosition(position);
-    _camera->SetLookAtVector(lookAt);
+    _player->GetTransform().position.x -= 1.0f * dt;
   }
-  else if (InputManager::GetInstance()->GetKeyState(SDLK_DOWN, SDL_KEYUP) == true)
+  else if (InputManager::GetInstance()->GetKeyState(SDLK_RIGHT, SDL_KEYDOWN) == true)
   {
-    Vector4 position = _camera->GetPosition();
-    position.y -= 1.0f;
-
-    Vector4 lookAt = Vector4::Normalize(Vector4::Difference(Vector4(1.0f, 0.0f, 0.0f, 0.0f), position));
-
-    _camera->SetPosition(position);
-    _camera->SetLookAtVector(lookAt);
+    _player->GetTransform().position.x += 1.0f * dt;
   }
+
+  _enemy->Approach(_player->GetTransform().position, dt);
 
   for (auto itr = _objects.begin(); itr != _objects.end(); itr++)
   {
